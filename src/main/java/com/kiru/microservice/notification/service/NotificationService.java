@@ -1,6 +1,6 @@
 package com.kiru.microservice.notification.service;
 
-import com.kiru.microservice.notification.order.OrderPlacedEvent;
+import com.kiru.microservice.order.event.OrderPlacedEvent;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.mail.MailException;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -22,7 +22,7 @@ public class NotificationService {
         MimeMessagePreparator messagePreparator = mimeMessage -> {
             MimeMessageHelper messageHelper = new MimeMessageHelper(mimeMessage);
             messageHelper.setFrom("springshop@email.com");
-            messageHelper.setTo(orderPlacedEvent.getEmail().toString());
+            messageHelper.setTo(orderPlacedEvent.getEmail());
             messageHelper.setSubject(String.format("Your Order with OrderNumber %s is placed successfully", orderPlacedEvent.getOrderNumber()));
             messageHelper.setText(String.format("""
                             Hi %s,%s
@@ -32,8 +32,6 @@ public class NotificationService {
                             Best Regards
                             Spring Shop
                             """,
-                    orderPlacedEvent.getFirstName().toString(),
-                    orderPlacedEvent.getLastName().toString(),
                     orderPlacedEvent.getOrderNumber()));
         };
         try {
